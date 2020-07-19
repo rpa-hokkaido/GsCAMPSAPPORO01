@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mr.CHECKMAN</title>
+  <link rel="stylesheet" href="stylesheet.css">
+  <link rel="stylesheet" href="responsive.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <script src="js/jquery-3.5.1.min.js"></script>
+  <!-- <script src="js/garlic/garlic.js"></script> -->
+  <script src="js/sisyphus/sisyphus.js"></script>
+  <style type="text/css">
+    #jsalarmclock {
+      font-family: Tahoma;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    #jsalarmclock div {
+      margin-bottom: 0.8em;
+    }
+
+    #jsalarmclock div.leftcolumn {
+      float: left;
+      width: 150px;
+      font-size: 13px;
+      background-color: lightyellow;
+      clear: left;
+    }
+
+    #jsalarmclock span {
+      margin-right: 5px;
+    }
+  </style>
+
+  <script type="text/javascript">
+
+    /***********************************************
+    
+    * JavaScript Alarm Clock- by JavaScript Kit (www.javascriptkit.com)
+    * This notice must stay intact for usage
+    * Visit JavaScript Kit at http://www.javascriptkit.com/ for this script and 100s more
+    
+    ***********************************************/
+
+    var jsalarm = {
+      padfield: function (f) {
+        return (f < 10) ? "0" + f : f
+      },
+      showcurrenttime: function () {
+        var dateobj = new Date()
+        var ct = this.padfield(dateobj.getHours()) + ":" + this.padfield(dateobj.getMinutes()) + ":" + this.padfield(dateobj.getSeconds())
+        this.ctref.innerHTML = ct
+        this.ctref.setAttribute("title", ct)
+        if (typeof this.hourwake != "undefined") { //if alarm is set
+          if (this.ctref.title == (this.hourwake + ":" + this.minutewake + ":" + this.secondwake)) {
+            clearInterval(jsalarm.timer)
+            window.location = document.getElementById("musicloc").value
+          }
+        }
+      },
+      init: function () {
+        var dateobj = new Date()
+        this.ctref = document.getElementById("jsalarm_ct")
+        this.submitref = document.getElementById("submitbutton")
+        this.submitref.onclick = function () {
+          jsalarm.setalarm()
+          this.value = "Alarm Set"
+          this.disabled = true
+          return false
+        }
+        this.resetref = document.getElementById("resetbutton")
+        this.resetref.onclick = function () {
+          jsalarm.submitref.disabled = false
+          jsalarm.hourwake = undefined
+          jsalarm.hourselect.disabled = false
+          jsalarm.minuteselect.disabled = false
+          jsalarm.secondselect.disabled = false
+          return false
+        }
+        var selections = document.getElementsByTagName("select")
+        this.hourselect = selections[0]
+        this.minuteselect = selections[1]
+        this.secondselect = selections[2]
+        for (var i = 0; i < 60; i++) {
+          if (i < 24) //If still within range of hours field: 0-23
+            this.hourselect[i] = new Option(this.padfield(i), this.padfield(i), false, dateobj.getHours() == i)
+          this.minuteselect[i] = new Option(this.padfield(i), this.padfield(i), false, dateobj.getMinutes() == i)
+          this.secondselect[i] = new Option(this.padfield(i), this.padfield(i), false, dateobj.getSeconds() == i)
+
+        }
+        jsalarm.showcurrenttime()
+        jsalarm.timer = setInterval(function () { jsalarm.showcurrenttime() }, 1000)
+      },
+      setalarm: function () {
+        this.hourwake = this.hourselect.options[this.hourselect.selectedIndex].value
+        this.minutewake = this.minuteselect.options[this.minuteselect.selectedIndex].value
+        this.secondwake = this.secondselect.options[this.secondselect.selectedIndex].value
+        this.hourselect.disabled = true
+        this.minuteselect.disabled = true
+        this.secondselect.disabled = true
+      }
+    }
+
+  </script>
+
+</head>
+
+<script>
+  function set2fig(num) {
+    // 数値が1桁だったら2桁の文字列にして返す
+    var ret;
+    if (num < 10) { ret = "0" + num; }
+    else { ret = num; }
+    return ret;
+  }
+  function isNumOrZero(num) {
+    // 数値でなかったら0にして返す
+    if (isNaN(num)) { return 0; }
+    return num;
+  }
+  function showCountdown() {
+    // 現在日時を数値(1970-01-01 00:00:00からのミリ秒)に変換
+    var nowDate = new Date();
+    var dnumNow = nowDate.getTime();
+
+    // 指定日時を数値(1970-01-01 00:00:00からのミリ秒)に変換
+    var inputYear = document.getElementById("userYear").value;
+    var inputMonth = document.getElementById("userMonth").value - 1;
+    var inputDate = document.getElementById("userDate").value;
+    var inputHour = document.getElementById("userHour").value;
+    var inputMin = document.getElementById("userMin").value;
+    var inputSec = document.getElementById("userSec").value;
+    var targetDate = new Date(isNumOrZero(inputYear), isNumOrZero(inputMonth), isNumOrZero(inputDate), isNumOrZero(inputHour), isNumOrZero(inputMin), isNumOrZero(inputSec));
+    var dnumTarget = targetDate.getTime();
+
+    // 表示を準備
+    var dlYear = targetDate.getFullYear();
+    var dlMonth = targetDate.getMonth() + 1;
+    var dlDate = targetDate.getDate();
+    var dlHour = targetDate.getHours();
+    var dlMin = targetDate.getMinutes();
+    var dlSec = targetDate.getSeconds();
+    var msg1 = "期限の" + dlYear + "/" + dlMonth + "/" + dlDate + " " + set2fig(dlHour) + ":" + set2fig(dlMin) + ":" + set2fig(dlSec);
+
+    // 引き算して日数(ミリ秒)の差を計算
+    var diff2Dates = dnumTarget - dnumNow;
+    if (dnumTarget < dnumNow) {
+      // 期限が過ぎた場合は -1 を掛けて正の値に変換
+      diff2Dates *= -1;
+    }
+
+    // 差のミリ秒を、日数・時間・分・秒に分割
+    var dDays = diff2Dates / (1000 * 60 * 60 * 24);   // 日数
+    diff2Dates = diff2Dates % (1000 * 60 * 60 * 24);
+    var dHour = diff2Dates / (1000 * 60 * 60);   // 時間
+    diff2Dates = diff2Dates % (1000 * 60 * 60);
+    var dMin = diff2Dates / (1000 * 60);   // 分
+    diff2Dates = diff2Dates % (1000 * 60);
+    var dSec = diff2Dates / 1000;   // 秒
+    var msg2 = Math.floor(dDays) + "日"
+      + Math.floor(dHour) + "時間"
+      + Math.floor(dMin) + "分"
+      + Math.floor(dSec) + "秒";
+
+    // 表示文字列の作成
+    var msg;
+    if (dnumTarget > dnumNow) {
+      // まだ期限が来ていない場合
+      msg = msg1 + "までは、あと" + msg2 + "です。";
+    }
+    else {
+      // 期限が過ぎた場合
+      msg = msg1 + "は、既に" + msg2 + "前に過ぎました。";
+    }
+
+    // 作成した文字列を表示
+    document.getElementById("RealtimeCountdownArea").innerHTML = msg;
+  }
+  // 1秒ごとに実行
+  setInterval('showCountdown()', 1000);
+</script>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="header-left">
+        <a>＞Mr.CHECKMAN＿</a>
+        <!-- <img class="logo" src="img/mail_logow.png"> -->
+      </div>
+      <!-- ここにメニューアイコンを追加してください -->
+      <span class="fa fa-bars menu-icon"></span>
+
+      <div class="header-right">
+        <!-- <a href="#">レッスン</a> -->
+        <a href="#">新規登録</a>
+        <a href="#" class="login">ログイン</a>
+      </div>
+    </div>
+  </header>
+  <div class="top-wrapper">
+    <div class="main_logo">
+      <img class="logo" src="img/main_logob.png">
+    </div>
+    <div class="container">
+      <h1>あなたの有効期限</h1>
+      <h1>見守ります</h1>
+      <p>Mr.CHECKMANは各種ポイントの有効期限お知らせサービスです。</p>
+      <p>ポイントの他にもソフトウェアライセンス期限・スケジュール管理にも使えます。</p>
+      <div class="btn-wrapper">
+        <!-- <a href="#" class="btn signup">新規登録はこちら</a>
+        <p>or</p>
+        <a href="#" class="btn facebook"><span class="fa fa-facebook"></span>Facebookで登録</a>
+        <a href="#" class="btn twitter"><span class="fa fa-twitter"></span>Twitterで登録</a> -->
+        <h2>ただいまチェック中</h2>
+        <form method="post" id="user" name="fm1" onsubmit="ons();">
+          <p>
+            <input type="text" id="userTitle" class="title">
+          <P></P>
+          <input type="text" id="userYear" maxlength="4" class="date">年
+          <input type="text" id="userMonth" maxlength="2" class="date">月
+          <input type="text" id="userDate" maxlength="2" class="date">日
+          <input type="text" id="userHour" maxlength="2" class="date">時
+          <input type="text" id="userMin" maxlength="2" class="date">分
+          <input type="hidden" id="userSec" maxlength="2" class="date"><br>
+          <input type="button" value="上記の日時までカウントダウンする" onclick="showCountdown();">
+          </p>
+        </form>
+        <script>
+          $(function () {
+            $("#user").sisyphus({
+              locationBased: false,
+              excludeFields: $('input[type="hidden"]'),
+              autoRelease: false
+            });
+          });
+        </script>
+        <p id="RealtimeCountdownArea">※ここにカウントダウンが表示されます。</p>
+      </div>
+    </div>
+  </div>
+
+  <form action="" method="">
+    <div id="jsalarmclock">
+      <div>
+        <div class="leftcolumn"> 現在時刻:</div> <span id="jsalarm_ct" style="letter-spacing: 2px"></span>
+      </div>
+      <div>
+        <div class="leftcolumn"> アラーム設定時間:</div> <span><select></select> 時</span> <span><select></select>
+          分</span> <span><select></select> 秒</span>
+      </div>
+      <div>
+        <div class="leftcolumn"> アクション:</div> <input type="text" id="musicloc" size="55"
+          value="https://www.youtube.com/watch?v=Isb7Q4jEA04" /> <span
+          style="font: normal 11px Tahoma">*起動するページの場所</span>
+      </div>
+      <input type="submit" value="設定" id="submitbutton" /> <input type="reset" value="リセット" id="resetbutton" />
+    </div>
+  </form>
+
+
+  <script type="text/javascript">
+
+    jsalarm.init()
+
+  </script>
+
+  <!-- <div class="lesson-wrapper">
+    <div class="container">
+      <div class="heading">
+        <h2>Learn Where to Get Started!</h2>
+      </div>
+      <div class="lessons">
+        <div class="lesson">
+          <div class="lesson-icon">
+            <img src="https://prog-8.com/images/html/advanced/html.png">
+            <p>HTML & CSS</p>
+          </div>
+          <p class="text-contents">Webページの作成に使用される言語です。HTMLとCSSを組み合わせることで、静的なページを作り上げることができます。</p>
+        </div>
+        <div class="lesson">
+          <div class="lesson-icon">
+            <img src="https://prog-8.com/images/html/advanced/jQuery.png">
+            <p>jQuery</p>
+          </div>
+          <p class="text-contents">素敵な動きを手軽に実装できるJavaScriptライブラリです。
+            アニメーション効果をつけたり、Ajax（エイジャックス）を使って外部ファイルを読み込んだりと色々なことができます。</p>
+        </div>
+        <div class="lesson">
+          <div class="lesson-icon">
+            <img src="https://prog-8.com/images/html/advanced/ruby.png">
+            <p>Ruby</p>
+          </div>
+          <p class="text-contents">オープンソースの動的なプログラミング言語で、
+            シンプルさと高い生産性を備えています。大きなWebアプリケーションから小さな日用ツールまで、さまざまなソフトウェアを作ることができます。</p>
+        </div>
+        <div class="lesson">
+          <div class="lesson-icon">
+            <img src="https://prog-8.com/images/html/advanced/php.png">
+            <p>PHP</p>
+          </div>
+          <p class="text-contents">HTMLだけではページの内容を変えることはできません。PHPはHTMLにプログラムを埋め込み、それを可能にします。</p>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+  <div class="message-wrapper">
+    <div class="container">
+      <div class="heading">
+        <h2>さぁ、あなたもProgateでプログラミングを学んでみませんか?</h2>
+        <h3>Let's learn to code, learn to be creative!</h3>
+      </div>
+      <span class="btn message">さっそく開発する</span>
+    </div>
+  </div> -->
+  <footer>
+    <div class="container">
+      <a>＞Mr.CHECKMAN＿</a>
+      <p>あなたの生活、チョット便利に。</p>
+    </div>
+  </footer>
+</body>
+
+</html>
