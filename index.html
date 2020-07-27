@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
-<link rel="icon" href="/favicon.ico">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mr.CHECKMAN</title>
   <link rel="stylesheet" href="stylesheet.css">
   <link rel="stylesheet" href="responsive.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <script src="js/jquery-3.5.1.min.js"></script>
+  <!-- <script src="js/garlic/garlic.js"></script> -->
   <script src="js/sisyphus/sisyphus.js"></script>
   <style type="text/css">
     #jsalarmclock {
-      font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+      font-family: Tahoma;
       font-weight: bold;
-      font-size: 15px;
+      font-size: 12px;
     }
 
     #jsalarmclock div {
@@ -22,8 +24,8 @@
 
     #jsalarmclock div.leftcolumn {
       float: left;
-      width: 180px;
-      font-size: 15px;
+      width: 150px;
+      font-size: 13px;
       background-color: lightyellow;
       clear: left;
     }
@@ -33,9 +35,10 @@
     }
   </style>
 
+  <!-- コメントアウト --2020/07/21 難しい
   <script type="text/javascript">
 
-    /***********************************************
+   /***********************************************
     
     * JavaScript Alarm Clock- by JavaScript Kit (www.javascriptkit.com)
     * This notice must stay intact for usage
@@ -102,7 +105,9 @@
       }
     }
 
-  </script>
+  </script> -->
+
+
 
 </head>
 
@@ -186,8 +191,13 @@
     <div class="container">
       <div class="header-left">
         <a>＞Mr.CHECKMAN＿</a>
+        <!-- <img class="logo" src="img/mail_logow.png"> -->
       </div>
+      <!-- ここにメニューアイコンを追加してください -->
+      <span class="fa fa-bars menu-icon"></span>
+
       <div class="header-right">
+        <!-- <a href="#">レッスン</a> -->
         <a href="#">新規登録</a>
         <a href="#" class="login">ログイン</a>
       </div>
@@ -217,7 +227,7 @@
           <input type="text" id="userDate" maxlength="2" class="date">日
           <input type="text" id="userHour" maxlength="2" class="date">時
           <input type="text" id="userMin" maxlength="2" class="date">分
-          <input type="hidden" id="userSec" maxlength="2" class="date"><br>
+          <input type="hidden" id="userSec" maxlength="2" class="date" value="0"><br>
           <input type="button" value="上記の日時までカウントダウンする" onclick="showCountdown();">
           </p>
         </form>
@@ -233,32 +243,135 @@
         <p id="RealtimeCountdownArea">※ここにカウントダウンが表示されます。</p>
       </div>
     </div>
+  </div>
+
 
   <form action="" method="">
     <div id="jsalarmclock">
       <div>
-        <div class="leftcolumn"> 現在時刻:</div> <span id="jsalarm_ct" style="letter-spacing: 2px"></span>
+        <div class="leftcolumn"> 現在時刻:</div>
+        <!--2020/07/21 <span id="jsalarm_ct" style="letter-spacing: 2px"></span> -->
+        <span id="RealtimeClockArea" style="letter-spacing: 2px"></span>
       </div>
       <div>
-        <div class="leftcolumn"> アラーム設定時間:</div> <span><select></select> 時</span> <span><select></select>
-          分</span> <span><select></select> 秒</span>
+        <div class="leftcolumn"> アラーム設定時間:</div>
+        <input type="text" id="wkYear" size="5" maxlength="4" style="text-align:right">年
+        <input type="text" id="wkMonth" size="5" maxlength="2" style="text-align:right">月
+        <input type="text" id="wkDate" size="5" maxlength="2" style="text-align:right">日
+        <input type="text" id="wkHour" size="5" maxlength="2" style="text-align:right"> :
+        <input type="text" id="wkMin" size="5" maxlength="2" style="text-align:right">
+        <!-- 上記のuserSecがhiddenになっているため、同じように隠しておく -->
+        <input type="hidden" id="wkSec" size="5" maxlength="2" style="text-align:right" value="0">
+        <!-- アラートを出したかどうかの処理用ボックス（値保持のため）-->
+        <input type="hidden" id="wkflg" size="5" maxlength="2" style="text-align:right" value="0">
       </div>
       <div>
         <div class="leftcolumn"> アクション:</div> <input type="text" id="musicloc" size="55"
-          value="https://www.youtube.com/watch?v=VtNgeDxYJzE&t=2s" /> <span
+          value="https://www.youtube.com/watch?v=Isb7Q4jEA04" /> <span
           style="font: normal 11px Tahoma">*起動するページの場所</span>
       </div>
       <input type="submit" value="設定" id="submitbutton" /> <input type="reset" value="リセット" id="resetbutton" />
     </div>
   </form>
-  </div>
+
+  <!-- 入力のリアルタイム表示のスクリプト -->
+  <script type="text/javascript">
+    userYear.oninput = function () {
+      // 上段のinputboxで入力した値をそのままアラーム用のinputboxに値を入れる
+      document.getElementById("wkYear").value = userYear.value;
+      if (document.getElementById("wkflg").value == "1") {
+        document.getElementById("wkflg").value = "0"
+      }
+    };
+    userMonth.oninput = function () {
+      document.getElementById("wkMonth").value = userMonth.value;
+      if (document.getElementById("wkflg").value == "1") {
+        document.getElementById("wkflg").value = "0"
+      }
+    };
+    userDate.oninput = function () {
+      document.getElementById("wkDate").value = userDate.value;
+      if (document.getElementById("wkflg").value == "1") {
+        document.getElementById("wkflg").value = "0"
+      }
+    };
+    userHour.oninput = function () {
+      document.getElementById("wkHour").value = userHour.value;
+      if (document.getElementById("wkflg").value == "1") {
+        document.getElementById("wkflg").value = "0"
+      }
+    };
+    userMin.oninput = function () {
+      document.getElementById("wkMin").value = userMin.value;
+      if (document.getElementById("wkflg").value == "1") {
+        document.getElementById("wkflg").value = "0"
+      }
+    };
+    userSec.oninput = function () {
+      document.getElementById("wkSec").value = userSec.value;
+      if (document.getElementById("wkflg").value == "1") {
+        document.getElementById("wkflg").value = "0"
+      }
+    };
+  </script>
+
+
+  <!-- 時間のリアルタイム表示のスクリプト -->
+  <span id="view_clock"></span>
+
+  <script type="text/javascript">
+    timerID = setInterval('clock()', 1000); //1秒毎にclock()を実行
+
+    function clock() {
+      document.getElementById("view_clock").innerHTML = getNow();
+    }
+
+    function getNow() {
+      var now = new Date();
+      var year = now.getFullYear();
+      var mon = now.getMonth() + 1; //0始まりのため1を足す。例：0は1月,1は2月...
+      var day = now.getDate();
+      var hour = now.getHours();
+      var min = now.getMinutes();
+      var sec = now.getSeconds();
+
+      //出力用
+      var s = year + "/" + mon + "/" + day + "/ " + hour + ":" + min + ":" + sec;
+      document.getElementById("RealtimeClockArea").innerHTML = s;
+
+      //時間の比較
+      if (document.getElementById("wkYear").value != "" && document.getElementById("wkMonth").value != "" && document.getElementById("wkDate").value != "" && document.getElementById("wkHour").value != "" && document.getElementById("wkMin").value != "") {
+
+        // フォーカスがあるIDを取得
+        var activeid = document.activeElement.id
+
+        if (activeid != "wkmin" && activeid != "userMin") {
+          var date1 = new Date();
+          //月には忘れず-1する（Date関数使用のため）
+          var date2 = new Date(document.getElementById("wkYear").value, document.getElementById("wkMonth").value - 1, document.getElementById("wkDate").value, document.getElementById("wkHour").value, document.getElementById("wkMin").value, 0);
+
+          // 処理用inputbox(hidden)が0なら処理する
+          if (document.getElementById("wkflg").value == "0") {
+            if (date1.getTime() >= date2.getTime()) {
+                        < !--window.location.href = document.getElementById("musicloc").value; // 通常の遷移 ※とりえずコメントアウト-->
+              window.open(document.getElementById("musicloc").value, '_blank'); // 新しいタブを開き、ページを表示
+              document.getElementById("wkflg").value = "1";
+            }
+          }
+        }
+      }
+    }
+  </script>
+  </span>
+
 
   <script type="text/javascript">
 
+    //ローカルに保存するjs
     jsalarm.init()
 
-  </script>
 
+  </script>
   <footer>
     <div class="container">
       <a>＞Mr.CHECKMAN＿</a>
